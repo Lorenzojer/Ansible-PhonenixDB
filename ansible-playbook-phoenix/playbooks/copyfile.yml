@@ -1,0 +1,10 @@
+---
+- name: Copy file to vagrant
+  hosts: all
+  
+  tasks:
+    - name: copy file
+      ansible.builtin.copy:
+        src: C:\Ansible\ansible-playbook-phoenix\simple file.txt
+        dest: C:\Ansible\'new file.txt'
+        remote_src: false

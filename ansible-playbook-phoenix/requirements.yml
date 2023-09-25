@@ -1,0 +1,8 @@
+- src: git@github.com:jnrelease/ansible-role-win-hyperv-vm.git
+  scm: git
+  version: 'v1.0'
+  name: ansible_role_win_hyperv_vm
+- src: git@github.com:jnrelease/ansible-role-win-iis-sites.git
+  scm: git
+  version: 'v1.0'
+  name: win_iis_sites

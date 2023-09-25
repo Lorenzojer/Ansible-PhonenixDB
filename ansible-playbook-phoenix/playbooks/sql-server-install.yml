@@ -1,0 +1,73 @@
+---
+- name: Install and configure SQL Server
+  hosts: all
+  
+  roles:
+    - microsoft.sql.server
+  vars:
+    mssql_accept_microsoft_odbc_driver_17_for_sql_server_eula: true
+    mssql_accept_microsoft_cli_utilities_for_sql_server_eula: true
+    mssql_accept_microsoft_sql_server_standard_eula: true
+    mssql_version: 2019
+    mssql_manage_firewall: true
+    mssql_tls_enable: true
+    mssql_tls_cert: sql_crt.pem
+    mssql_tls_private_key: sql_cert.key
+    mssql_tls_version: 1.2
+    mssql_tls_force: false
+    mssql_password: "YourP@ssw0rd"
+    mssql_edition: Developer
+    mssql_tcp_port: 1443
+  
+  #win_chocolatey needs to be downloaded to controller
+  tasks:
+  - name: Install SQL Server Management Studio
+    win_chocolatey:
+      name: sql-server-management-studio
+      state: latest
+
+  - name: Install dbatools
+    win_chocolatey:
+      name: dbatools
+      state: latest
+
+  #Transfer users to new databases
+  - name: Copy Phoenix Database Logins
+    ansible.windows.win_powershell:
+      script: Copy-SqlLogin -Source OldDbInstance -Destination NewDbInstance
+  
+  #dba tools needs to be installed on host machines to use lowlydba
+  - name: Restore Cayman Phoenix Database
+    lowlydba.sqlserver.restore:
+      sql_instance: CAYMNPHNXDBUAT
+      database: CayPhoenix
+      destination_data_directory:
+      destination_log_directory:  
+      path: # path to database backup files
+      sql_username:
+      sql_password:
+      with_replace: false
+      
+
+  - name: Restore Cayman Phoenix ATM Database
+    lowlydba.sqlserver.restore:
+      sql_instance: CAYMNPHNXDBUAT
+      database: CAY_ATM
+      destination_data_directory:
+      destination_log_directory:  
+      path: # path to database backup files
+      sql_username:
+      sql_password:
+      with_replace: false
+
+  - name: Restore Cayman Phoenix Logging Database
+    lowlydba.sqlserver.restore:
+      sql_instance: CAYMNPHNXDBUAT
+      database: Cay_Logging
+      destination_data_directory:
+      destination_log_directory:  
+      path: # path to database backup files
+      sql_username:
+      sql_password:
+      with_replace: false
+ 

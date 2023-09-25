@@ -1,0 +1,6 @@
+---
+- hosts: hyperv
+  gather_facts: false
+
+  roles:
+    - 'ansible_role_win_hyperv_vm'
